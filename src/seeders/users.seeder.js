@@ -1,6 +1,5 @@
 require("dotenv").config();
 const db = require("../configs/db.config");
-const mysql = require("mysql2");
 const User = require("../models/user.model");
 const bcrypt = require('bcryptjs');
 const bcryptSalt = parseInt(process.env.BCRYPT_SALT);
