@@ -1,5 +1,5 @@
 require("dotenv").config();
-const db = require("../configs/db.config");
+const db = require("../configs/oldDb.config");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 

@@ -1,4 +1,4 @@
-const db = require("../configs/db.config");
+const db = require("../configs/oldDb.config");
 
 class Material {
     constructor(titulo, uploadedBy, precio, editorial, autor, anioMaterial, numeroPaginas, descripcion, portadaLibroUrl, pdfUrl) {
@@ -15,6 +15,7 @@ class Material {
     }
 
     static async getAll(limit, offset) {
+        const connection = await db.createConnection();
         const sql ="SELECT * FROM materiales LIMIT ? OFFSET ?";
         const results = await db.promise().query(sql, [limit, offset]);
         return results[0];
