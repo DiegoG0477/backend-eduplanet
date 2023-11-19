@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router()
 
-const videoController = require("../../controllers/video.controller")
-const verifyToken = require("../../middlewares/auth.middlewares")
+const videoController = require("../controllers/video.controller")
+const {verifyToken} = require("../middlewares/auth.middleware")
 
 router.get("/videos/:id", videoController.getVideos)
 router.post("/video",verifyToken, videoController.createVideo)
