@@ -15,7 +15,6 @@ app.use(
     fileUpload({
         useTempFiles: true,
         tempFileDir: "./tmp",
-
     })
 );
 app.use(cors({ credentials: true, origin: true }));

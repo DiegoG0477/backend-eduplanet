@@ -1,4 +1,7 @@
 const Material = require("../models/material.model");
+const fs = require("fs-extra")
+const { uploadImage, uploadPdf } = require("../configs/cloudinary.config");
+const jwt = require("jsonwebtoken");
 
 const index = async (req, res) => {
     try {
@@ -8,7 +11,7 @@ const index = async (req, res) => {
 
         return res.status(200).json({
             message: "lista de publicaciones",
-            materials,
+            data: materials,
         });
     } catch (error) {
         return res.status(500).json({
@@ -37,6 +40,22 @@ const showMaterial = async (req, res) => {
 const uploadMaterial = async (req, res) => {
     try {
         const token = jwt.verify(req.headers.token,process.env.SECRET);
+
+        let portada = null
+        if(req.files?.portada){
+            portada = await uploadImage(req.files.portada.tempFilePath);
+            await fs.unlink(req.files.portada.tempFilePath);
+        } 
+
+        let pdf = null
+        if(req.files?.pdf){
+            pdf = await uploadPdf(req.files.pdf.tempFilePath);
+            await fs.unlink(req.files.pdf.tempFilePath);
+        }
+
+        if(!portada || !pdf){
+            throw new Error("no se subieron los archivos correctamente");
+        }
         
         const material = new Material({
             titulo: req.body.titulo,
@@ -47,8 +66,8 @@ const uploadMaterial = async (req, res) => {
             anioMaterial: req.body.anioMaterial,
             numeroPaginas: req.body.numeroPaginas,
             descripcion: req.body.descripcion,
-            portadaLibroUrl: req.body.portadaLibroUrl,
-            pdfUrl: req.body.pdfUrl,
+            portadaLibroUrl: portada.secure_url,
+            pdfUrl: pdf.secure_url,
         });
 
         await material.save();
@@ -67,23 +86,36 @@ const uploadMaterial = async (req, res) => {
 
 const updateMaterial = async (req, res) => {
     try{
+        const token = jwt.verify(req.headers.token,process.env.SECRET);
         const idMaterial = req.params.id;
 
-        const material = {
-            titulo: req.body.titulo,
-            uploaded_at: req.body.uploadedAt,
-            uploaded_by: req.body.uploadedBy,
+        let material = {
+            ...req.body,
             updated_at: new Date(),
-            updated_by: req.body.updatedBy,
-            precio: req.body.precio,
-            editorial: req.body.editorial,
-            autor: req.body.autor,
-            year_material: req.body.anioMaterial,
-            numero_paginas: req.body.numeroPaginas,
-            descripcion: req.body.descripcion,
-            portada_libro: req.body.portadaLibroUrl,
-            pdf: req.body.pdfUrl,
+            updated_by: token.id,
         };
+
+        let portada = null
+        if(req.files?.portada){
+            portada = await uploadImage(req.files.portada.tempFilePath);
+            await fs.unlink(req.files.portada.tempFilePath);
+
+            material = {
+                ...material,
+                portadaLibroUrl: portada.secure_url,
+            }
+        } 
+
+        let pdf = null
+        if(req.files?.pdf){
+            pdf = await uploadPdf(req.files.pdf.tempFilePath);
+            await fs.unlink(req.files.pdf.tempFilePath);
+
+            material = {
+                ...material,
+                pdfUrl: pdf.secure_url,
+            }
+        }
         
         const updatedMaterial = await Material.updateById(material, idMaterial);
 

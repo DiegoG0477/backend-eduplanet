@@ -122,7 +122,7 @@ const updateUser = async (req, res) => {
             updated_by: req.usuario_id,
         };
 
-        const updatedUser = await User.update(id, user);
+        await User.update(id, user);
 
         return res.status(200).json({
             message: "usuario actualizado correctamente",
