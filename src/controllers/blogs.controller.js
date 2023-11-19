@@ -1,14 +1,15 @@
-const Blog = require("../models/blog.model")
-const fs=require("fs-extra")
-const { uploadImage } = require("../configs/cloudinary.config")
-const jwt = require("jsonwebtoken")
+const Blog = require("../models/blog.model");
+const fs = require("fs-extra");
+const { uploadImage } = require("../configs/cloudinary.config");
+const jwt = require("jsonwebtoken");
+
 const postBlog = async (req,res)=>{
     try {
-        const token = jwt.verify(req.headers.token,process.env.SECRET)
-        console.log(token)
+        const token = jwt.verify(req.headers.token,process.env.SECRET);
+        console.log(token);
         let imagen=null
         if(req.files?.imagen){
-            imagen=await uploadImage(req.files.imagen.tempFilePath)
+            imagen= await uploadImage(req.files.imagen.tempFilePath)
             await fs.unlink(req.files.imagen.tempFilePath)
         } 
 

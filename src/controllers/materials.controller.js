@@ -36,18 +36,20 @@ const showMaterial = async (req, res) => {
 
 const uploadMaterial = async (req, res) => {
     try {
-        const material = new Material(
-            req.body.titulo,
-            req.body.uploadedBy,
-            req.body.precio,
-            req.body.editorial,
-            req.body.autor,
-            req.body.anioMaterial,
-            req.body.numeroPaginas,
-            req.body.descripcion,
-            req.body.portadaLibroUrl,
-            req.body.pdfUrl
-        );
+        const token = jwt.verify(req.headers.token,process.env.SECRET);
+        
+        const material = new Material({
+            titulo: req.body.titulo,
+            uploadedBy: token.id,
+            precio: req.body.precio,
+            editorial: req.body.editorial,
+            autor: req.body.autor,
+            anioMaterial: req.body.anioMaterial,
+            numeroPaginas: req.body.numeroPaginas,
+            descripcion: req.body.descripcion,
+            portadaLibroUrl: req.body.portadaLibroUrl,
+            pdfUrl: req.body.pdfUrl,
+        });
 
         await material.save();
 

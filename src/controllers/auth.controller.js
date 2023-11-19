@@ -5,16 +5,16 @@ const signUp = async (req, res) => {
     try {
         const encryptedPassword = await User.encryptPassword(req.body.password);
 
-        const user = {
+        const user = new User({
             email: req.body.email,
             password: encryptedPassword,
             nombre: req.body.nombre,
             apellidoPat: req.body.apellido_pat,
             apellidoMat: req.body.apellido_mat,
-        };
+        });
 
         console.log(user);
-        const found = await User.find(user.email);
+        const found = await user.findByEmail(user.email);
 
         if (found) {
             return res.status(400).json({
@@ -37,7 +37,7 @@ const signUp = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const userFound = await User.find(req.params.email);
+    const userFound = await User.findByEmail(req.params.email);
     console.log(userFound);
     const matchPassword = await User.comparePassword(
         userFound.password,
@@ -53,7 +53,7 @@ const login = async (req, res) => {
             message: "email o contraseña incorrectaa",
         });
     } else {
-        const token = User.getToken(userFound.id_usuario);
+        const token = User.getToken(userFound.id);
 
         const serializedToken = cookie.serialize("myToken", token, {
             httpOnly: true,
