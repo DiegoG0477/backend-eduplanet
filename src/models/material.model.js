@@ -1,7 +1,7 @@
 const db = require("../configs/db.config");
 
 class Material {
-    constructor({titulo, uploadedBy, precio, editorial, autor, anioMaterial, numeroPaginas, descripcion, portadaLibroUrl, pdfUrl}) {
+    constructor({titulo, uploadedAt, uploadedBy, updatedAt, updatedBy, precio, editorial, autor, anioMaterial, numeroPaginas, descripcion, portadaLibroUrl, pdfUrl}) {
         this.titulo = titulo;
         this.uploadedAt = uploadedAt;
         this.uploadedBy = uploadedBy;
@@ -19,7 +19,7 @@ class Material {
 
     static async getAll(limit, offset) {
         const connection = await db.createConnection();
-        let query = "SELECT * FROM materiales LIMIT ? OFFSET ?";
+        let query = "SELECT * FROM material LIMIT ? OFFSET ?";
 
         // if (sort && order) {
         //     query += ` ORDER BY ${sort} ${order}`
@@ -34,10 +34,11 @@ class Material {
         console.log(rows);
         return rows;
     }
+    
 
     static async getById(id) {
         const connection = await db.createConnection();
-        const [rows] = await connection.execute("SELECT * FROM materiales WHERE id_material = ?", [id]);
+        const [rows] = await connection.execute("SELECT * FROM material WHERE id_material = ?", [id]);
         connection.end();
     
         if(rows.length > 0){
@@ -48,11 +49,11 @@ class Material {
         return null;
     }
 
-    static async save() {
+    async save() {
+        console.log(this);
         const connection = await db.createConnection();
-        const uploadedAt = new Date();
-        const sql = "INSERT INTO materiales(titulo, uploaded_at, uploaded_by, precio, editorial, autor, anio_material, numero_paginas, descripcion, portada_libro, pdf) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-        const [result] = await connection.execute(sql, [this.titulo, uploadedAt, this.uploadedBy, this.precio, this.editorial, this.autor, this.anioMaterial, this.numeroPaginas, this.descripcion, this.portadaLibroUrl, this.pdfUrl]);
+        const sql = "INSERT INTO material(titulo, uploaded_at, uploaded_by, precio, editorial, autor, year_material, numero_paginas, descripcion, portada_libro, pdf) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        const [result] = await connection.execute(sql, [this.titulo, this.uploadedAt, this.uploadedBy, this.precio, this.editorial, this.autor, this.anioMaterial, this.numeroPaginas, this.descripcion, this.portadaLibroUrl, this.pdfUrl]);
         connection.end();
 
         console.log(result);
@@ -68,7 +69,7 @@ class Material {
 
     static async updateById(material, id){
         const connection = await db.createConnection();
-        const sql = "UPDATE materiales SET ? WHERE id_material = ?";
+        const sql = "UPDATE material SET ? WHERE id_material = ?";
         const [result] = connection.execute(sql, [material, id]);
         connection.end();
         console.log(result);
@@ -80,7 +81,7 @@ class Material {
 
     static async truncateTable(){
         const connection = await db.createConnection();
-        const sql = "DELETE FROM materiales";
+        const sql = "DELETE FROM material";
         const [result] = connection.execute(sql);
         connection.end();
 
@@ -91,5 +92,4 @@ class Material {
         return;
     }
 }
-
-module.exports = Material;
+module.exports=Material;

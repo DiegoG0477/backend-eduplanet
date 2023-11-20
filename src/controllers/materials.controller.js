@@ -39,7 +39,7 @@ const showMaterial = async (req, res) => {
 
 const uploadMaterial = async (req, res) => {
     try {
-        const token = jwt.verify(req.headers.token,process.env.SECRET);
+        const token = jwt.verify(req.cookies.token, process.env.SECRET_KEY);
 
         let portada = null
         if(req.files?.portada){
@@ -60,6 +60,7 @@ const uploadMaterial = async (req, res) => {
         const material = new Material({
             titulo: req.body.titulo,
             uploadedBy: token.id,
+            uploadedAt: new Date(),
             precio: req.body.precio,
             editorial: req.body.editorial,
             autor: req.body.autor,
@@ -77,6 +78,7 @@ const uploadMaterial = async (req, res) => {
             material,
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             message: "error al crear el material",
             error: error,
@@ -86,7 +88,7 @@ const uploadMaterial = async (req, res) => {
 
 const updateMaterial = async (req, res) => {
     try{
-        const token = jwt.verify(req.headers.token,process.env.SECRET);
+        const token = jwt.verify(req.cookies.token,process.env.SECRET);
         const idMaterial = req.params.id;
 
         let material = {
@@ -135,7 +137,6 @@ const updateMaterial = async (req, res) => {
 module.exports = {
     index,
     showMaterial,
-    createMaterial,
     uploadMaterial,
     updateMaterial,
 };

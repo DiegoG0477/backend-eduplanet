@@ -1,3 +1,4 @@
+require("dotenv").config();
 const cloudinary = require("cloudinary");
 
 cloudinary.v2.config({
@@ -8,6 +9,7 @@ cloudinary.v2.config({
 });
 
 const uploadImage = async (filepath) => {
+    console.log(process.env.CLOUDINARY_API_KEY)
     return await cloudinary.v2.uploader.upload(filepath, {
         folder: "eduplanet/thumbnails",
     });

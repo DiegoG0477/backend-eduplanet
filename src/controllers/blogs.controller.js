@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const postBlog = async (req,res)=>{
     try {
-        const token = jwt.verify(req.headers.token,process.env.SECRET);
+        const token = jwt.verify(req.cookies.token,process.env.SECRET_KEY);
         console.log(token);
         let imagen = null
         if(req.files?.imagen){
@@ -20,10 +20,11 @@ const postBlog = async (req,res)=>{
             contenido: req.body.contenido,
             createdAt: new Date(),
         })
-        await blog.save()
+        await blog.save();
+
         return res.status(201).json({
             message: "se creo el blog correctamente",
-        })
+        });
     } catch (error) {
         return res.status(500).json({
             message: "error al crear un blog",
@@ -48,7 +49,7 @@ const getBlogs = async (req,res)=>{
 }
 const deleteBlog = (req,res)=>{
     try{
-        const token = jwt.verify(req.headers.token,process.env.SECRET)
+        const token = jwt.verify(req.cookies.token,process.env.SECRET_KEY)
         console.log(token)
         const blog={
             id: req.params.id,
@@ -68,7 +69,7 @@ const deleteBlog = (req,res)=>{
 const putBlog = async(req,res)=>{
     try{
 
-        const token = jwt.verify(req.headers.token,process.env.SECRET)
+        const token = jwt.verify(req.cookies.token,process.env.SECRET_KEY)
         console.log(token)
 
 

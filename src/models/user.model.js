@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 class User {
-    constructor({ id, email, password, nombre, apellidoPat, apellidoMat, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy }){
+    constructor({ id,email, password, nombre, apellidoPat, apellidoMat, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy }){
         this.id = id;
         this.email = email;
         this.password = password;
@@ -27,6 +27,7 @@ class User {
     }
 
     static async findById(id){
+        console.log(id + " este es el id");
         const connection = await db.createConnection();
         const [rows] = await connection.execute("SELECT * FROM usuarios u INNER JOIN datos_usuarios du ON u.id_usuario = du.id_usuario WHERE u.id_usuario = ?", [id]);
         connection.end();
@@ -56,8 +57,10 @@ class User {
     static async getId(email){
         const connection = await db.createConnection();
         const sql = "SELECT id_usuario FROM usuarios WHERE email = ?";
-        [result] = await connection.execute(sql,[email]);
+        const [result] = await connection.execute(sql,[email]);
         connection.end();
+
+        console.log(result);
 
         if(result.length > 0){
             const row = result[0];
@@ -81,17 +84,19 @@ class User {
         return null;
     }
 
-    static async create(){
+    async create(){
         const connection = await db.createConnection();
         const [result] = await connection.execute("INSERT INTO usuarios(email, password, created_at) VALUES (?,?,?)", [this.email, this.password, new Date()]);
         
-        const id = await User.getId(user.email);
+        console.log(result);
+        const id = await User.getId(this.email);
         console.log(id);     
 
         const [resultTwo] = await connection.execute("INSERT INTO datos_usuarios(id_usuario, nombre, apellido_pat, apellido_mat) VALUES (?,?,?,?)", [id, this.nombre, this.apellidoPat, this.apellidoMat]);
         connection.end();
 
-        if(result.insertId === 0 || resultTwo.insertId === 0){
+        console.log(resultTwo);
+        if(result.insertId === 0 || resultTwo.affectedRows === 0){
             throw new Error("No se insertó el usuario de forma correcta");
         }
 
@@ -188,5 +193,4 @@ class User {
         return jwt.verify(token, process.env.SECRET_KEY);
     }
 }
-
-module.exports = User;
+module.exports=User;
