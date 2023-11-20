@@ -21,7 +21,7 @@ class Blog {
         if (result.insertId == 0) {
             throw new Error("No se pudo crear el blog")
         }
-        this.id = result.insertId
+        this.id = result.insertId;
     }
 
     static async getAll() {
@@ -44,7 +44,7 @@ class Blog {
             throw new Error("No se pudo actualizar el blog")
         }
 
-        return
+        return;
     }
 
     static async delete(blog) {

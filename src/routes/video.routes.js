@@ -1,13 +1,13 @@
 const express = require('express');
-const router = express.Router()
-
+const router = express.Router();
 const videoController = require("../controllers/video.controller")
-const {verifyToken} = require("../middlewares/auth.middleware")
+const middlewares = require("../middlewares/auth.middleware")
 
-router.get("/:id", videoController.getVideos)
-router.post("/",verifyToken, videoController.createVideo)
-router.delete("/:id",verifyToken, videoController.deleteVideo)
-router.put("/:id",verifyToken, videoController.putVideo)
-router.get("/:id", videoController.getById)
 
-module.exports = router
+router.get("/videos/:id", videoController.getVideos)
+router.post("/video", middlewares.verifyToken, videoController.createVideo)
+router.delete("/video/:id", middlewares.verifyToken, videoController.deleteVideo)
+router.put("/video/:id", middlewares.verifyToken, videoController.putVideo)
+router.get("/video/:id", videoController.getById)
+
+module.exports = router;

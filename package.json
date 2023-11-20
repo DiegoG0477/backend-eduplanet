@@ -1,6 +1,6 @@
 {
   "name": "backend-eduplanet",
-  "version": "1.0.0",
+  "version": "0.2.5-alpha",
   "description": "'API REST for eduplanet project'",
   "main": "index.js",
   "license": "ISC",

@@ -38,7 +38,7 @@ const getById = async (req,res)=>{
 
 const createVideo = async (req,res)=>{
     try{
-        const token = jwt.verify(req.headers.token,process.env.SECRET)
+        const token = jwt.verify(req.cookies.token,process.env.SECRET_KEY)
         let imagen=null
         if(req.files?.imagen){
             imagen=await uploadImage(req.files.imagen.tempFilePath)
@@ -68,7 +68,7 @@ const createVideo = async (req,res)=>{
 
 const deleteVideo = async (req,res)=>{
     try{
-        const token = jwt.verify(req.headers.token,process.env.SECRET)
+        const token = jwt.verify(req.headers.token,process.env.SECRET_KEY)
         const multimedia = {
             id: req.params.id,
             idUsuario: token.id,
@@ -88,7 +88,7 @@ const deleteVideo = async (req,res)=>{
 
 const putVideo = async (req,res)=>{
     try{
-        const token = jwt.verify(req.headers.token,process.env.SECRET)
+        const token = jwt.verify(req.headers.token,process.env.SECRET_KEY)
         let imagen=null
         if(req.files?.imagen){
             imagen=await uploadImage(req.files.imagen.tempFilePath)
