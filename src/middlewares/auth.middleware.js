@@ -12,7 +12,6 @@ const verifyToken = async (req, res, next) => {
         }
 
         const decoded = await User.verifyToken(token);
-        console.log(decoded);
         req.usuario_id = decoded.id;
 
         console.log(req.usuario_id + " esto es lo que se envia al controlador");

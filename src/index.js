@@ -31,6 +31,7 @@ app.use("/v1/users", usersRouter);
 app.use("/v1/blogs", blogsRouter);
 app.use("/v1/videos", videosRouter);
 app.use("/v1/comentarios", comentariosRouter);
+app.use("/v1/materials", materialsRouter);
 
 app.listen(PORT, () => {
     console.log("corriendo en el puerto " + PORT);

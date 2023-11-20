@@ -27,7 +27,6 @@ class User {
     }
 
     static async findById(id){
-        console.log(id + " este es el id");
         const connection = await db.createConnection();
         const [rows] = await connection.execute("SELECT * FROM usuarios u INNER JOIN datos_usuarios du ON u.id_usuario = du.id_usuario WHERE u.id_usuario = ?", [id]);
         connection.end();

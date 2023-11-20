@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Material = require("../models/material.model");
 const fs = require("fs-extra")
 const { uploadImage, uploadPdf } = require("../configs/cloudinary.config");
@@ -46,13 +47,12 @@ const uploadMaterial = async (req, res) => {
             portada = await uploadImage(req.files.portada.tempFilePath);
             await fs.unlink(req.files.portada.tempFilePath);
         } 
-
         let pdf = null
         if(req.files?.pdf){
             pdf = await uploadPdf(req.files.pdf.tempFilePath);
             await fs.unlink(req.files.pdf.tempFilePath);
         }
-
+        
         if(!portada || !pdf){
             throw new Error("no se subieron los archivos correctamente");
         }
@@ -70,7 +70,6 @@ const uploadMaterial = async (req, res) => {
             portadaLibroUrl: portada.secure_url,
             pdfUrl: pdf.secure_url,
         });
-
         await material.save();
 
         return res.status(201).json({
