@@ -4,10 +4,10 @@ const router = express.Router()
 const videoController = require("../controllers/video.controller")
 const {verifyToken} = require("../middlewares/auth.middleware")
 
-router.get("/videos/:id", videoController.getVideos)
-router.post("/video",verifyToken, videoController.createVideo)
-router.delete("/video/:id",verifyToken, videoController.deleteVideo)
-router.put("/video/:id",verifyToken, videoController.putVideo)
-router.get("/video/:id", videoController.getById)
+router.get("/:id", videoController.getVideos)
+router.post("/",verifyToken, videoController.createVideo)
+router.delete("/:id",verifyToken, videoController.deleteVideo)
+router.put("/:id",verifyToken, videoController.putVideo)
+router.get("/:id", videoController.getById)
 
 module.exports = router

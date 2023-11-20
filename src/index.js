@@ -27,7 +27,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/v1/auth", authRouter);
 app.use("/v1/users", usersRouter);
-
 app.use("/v1/blogs", blogRouter);
 app.use("/v1/videos", videosRouter);
 app.use("/v1/comentarios", comentariosRouter);
