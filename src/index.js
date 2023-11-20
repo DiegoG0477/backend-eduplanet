@@ -14,12 +14,6 @@ const blogsRouter = require("./routes/blog.routes");
 const videosRouter = require("./routes/video.routes")
 const comentariosRouter = require("./routes/comments.routes")
 
-
-app.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: "./blog_imagen",
-}));
-
 app.use(cookieParser());
 
 app.use(
