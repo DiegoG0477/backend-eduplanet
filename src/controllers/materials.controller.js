@@ -5,14 +5,28 @@ const jwt = require("jsonwebtoken");
 
 const index = async (req, res) => {
     try {
+        const page = parseInt(req.query.page);
         const limit = parseInt(req.query.limit);
-        const offset = parseInt(req.query.offset);
-        const materials = await Material.getAll(limit, offset);
+        const offset = (page - 1) * limit;
 
-        return res.status(200).json({
-            message: "lista de publicaciones",
-            data: materials,
-        });
+        const data = await Material.getAll(limit, offset);
+
+        let response = {
+            menssage: "se obtuvieron los datos correctamente",
+            data: data,
+        }
+
+        if (page && limit) {
+            const totalBlogs = await Material.count();
+            response = {
+                ...response,
+                total: totalBlogs,
+                totalPages: Math.ceil(totalBlogs / limit),
+                currentPage: page
+            };
+        }
+        return res.status(200).json(response)
+
     } catch (error) {
         return res.status(500).json({
             message: "error al obtener los materiales",
@@ -27,7 +41,7 @@ const showMaterial = async (req, res) => {
 
         return res.status(200).json({
             message: "material encontrado",
-            material,
+            data:material,
         });
     } catch (error) {
         return res.status(500).json({

@@ -2,11 +2,16 @@ const PAYPAL_API = process.env.PAYPAL_API;
 const PAYPAL_API_CLIENT = process.env.PAYPAL_API_CLIENT;
 const PAYPAL_API_SECRET = process.env.PAYPAL_API_SECRET;
 HOST = `http://localhost:${process.env.PORT}/v1/payment`;
+const axios = require("axios");
 
 const createOrder = async (req, res) => {
     try {
-        console.log(PAYPAL_API + " " + PAYPAL_API_CLIENT + " " + PAYPAL_API_SECRET)
-        const { item } = req.body;
+        // console.log(PAYPAL_API + " " + PAYPAL_API_CLIENT + " " + PAYPAL_API_SECRET)
+        const item = {
+            price:req.body.price,
+            title:req.body.title,
+        };
+        console.log(req.body);
         console.log(item);
 
         const order = {
