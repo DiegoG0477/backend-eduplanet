@@ -11,8 +11,9 @@ const usersRouter = require("./routes/users.routes");
 const authRouter = require("./routes/auth.routes");
 const materialsRouter = require("./routes/materials.routes");
 const blogsRouter = require("./routes/blog.routes");
-const videosRouter = require("./routes/video.routes")
-const comentariosRouter = require("./routes/comments.routes")
+const videosRouter = require("./routes/video.routes");
+const comentariosRouter = require("./routes/comments.routes");
+const paymentRouter = require("./routes/payment.routes");
 
 app.use(cookieParser());
 
@@ -32,6 +33,7 @@ app.use("/v1/blogs", blogsRouter);
 app.use("/v1/videos", videosRouter);
 app.use("/v1/comentarios", comentariosRouter);
 app.use("/v1/materials", materialsRouter);
+app.use("/v1/payment", paymentRouter);
 
 app.listen(PORT, () => {
     console.log("corriendo en el puerto " + PORT);

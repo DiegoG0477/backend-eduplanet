@@ -19,7 +19,7 @@ class Material {
 
     static async getAll(limit, offset) {
         const connection = await db.createConnection();
-        let query = "SELECT * FROM material LIMIT ? OFFSET ?";
+        let query = "SELECT * FROM material";
 
         // if (sort && order) {
         //     query += ` ORDER BY ${sort} ${order}`
@@ -43,7 +43,7 @@ class Material {
     
         if(rows.length > 0){
             const row = rows[0];
-            return new Material({titulo: row.titulo, uploadedBy: row.uploaded_by, precio: row.precio, editorial: row.editorial, autor: row.autor, anioMaterial: row.anio_material, numeroPaginas: row.numero_paginas, descripcion: row.descripcion, portadaLibroUrl: row.portada_libro, pdfUrl: row.pdf, uploadedAt: row.uploaded_at, updatedAt: row.updated_at, updatedBy: row.updated_by});
+            return new Material({titulo: row.titulo, uploadedBy: row.uploaded_by, precio: row.precio, editorial: row.editorial, autor: row.autor, anioMaterial: row.year_material, numeroPaginas: row.numero_paginas, descripcion: row.descripcion, portadaLibroUrl: row.portada_libro, pdfUrl: row.pdf, uploadedAt: row.uploaded_at, updatedAt: row.updated_at, updatedBy: row.updated_by});
         }
 
         return null;
@@ -77,6 +77,16 @@ class Material {
             throw new Error("no se actualizó el usuario");
         }
         return;
+    }
+
+    static async count(){
+        const connection = await db.createConnection();
+        const sql = "SELECT COUNT(*) AS total FROM material";
+        const [rows] = await connection.execute(sql);
+        connection.end();
+        
+        console.log(rows);
+        return rows[0].total;
     }
 
     static async truncateTable(){
