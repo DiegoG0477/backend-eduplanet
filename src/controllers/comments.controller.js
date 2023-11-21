@@ -1,6 +1,7 @@
 require('dotenv').config()
 const Comment = require('../models/comment.model')
 const jwt = require('jsonwebtoken')
+const pusher = require('../configs/pusher.config')
 const getAllCommentBlog = async (req,res) => {
     try{
         const {id} = req.params
@@ -18,8 +19,15 @@ const getAllCommentBlog = async (req,res) => {
 }
 const postComment = async (req,res) =>{
     try{
-        const {id} = jwt.verify(req.headers.token,process.env.SECRET)
-        const comentario = new Comment({
+        const {id} = jwt.verify(req.cookies.token, process.env.SECRET_KEY);
+        await pusher.trigger("chat","message",{
+                idBlog: req.params.id,
+                comentario: req.body.comentario,
+                idUsuario: id,
+                createdBy: id,
+                created_at: new Date()
+        })
+        const comentario =new Comment({
             idBlog: req.params.id,
             comentario: req.body.comentario,
             idUsuario: id,
@@ -32,7 +40,7 @@ const postComment = async (req,res) =>{
         })
     }catch(error){
         return res.status(500).json({
-            message: "error al obtener los comentarios",
+            message: "error al crear el comentarios",
             error: error.message
         })
     }
@@ -64,7 +72,7 @@ const getById = async (req,res) =>{
             data: comentario
         })
     }catch(error){
-        return res.statuc(500).json({
+        return res.status(500).json({
             message: "error al obtener los comentarios",
             error: error.message
         })    

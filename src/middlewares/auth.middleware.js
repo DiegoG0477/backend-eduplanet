@@ -16,8 +16,7 @@ const verifyToken = async (req, res, next) => {
 
         console.log(req.usuario_id + " esto es lo que se envia al controlador");
 
-        const user = User.findById(req.usuario_id);
-
+        const user = await User.findById(req.usuario_id);
         if (!user || !decoded.id) {
             return res.status(404).json({
                 message: "usuario no encontrado",
@@ -26,6 +25,7 @@ const verifyToken = async (req, res, next) => {
 
         next();
     } catch (error) {
+        console.log(error);
         return res.status(401).json({
             message: "No autorizado",
         });

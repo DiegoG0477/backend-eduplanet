@@ -1,5 +1,4 @@
 const User = require("../models/user.model");
-
 const index = async (req, res) => {
     try {
         const { page, limit } = req.query;
@@ -35,13 +34,12 @@ const getById = async (req, res) => {
   try{
     const { id } = req.params;
     const user = await User.findById(id);
-  
+    
     if (!user) {
       return res.status(404).json({
         message: "usuario no encontrado",
       });
     }
-  
     return res.status(200).json({
       message: "usuario encontrado correctamente",
       data: user,
@@ -134,6 +132,22 @@ const updateUser = async (req, res) => {
         });
     }
 }
+const getTokenId = async (req,res) =>{
+    try{
+        console.log("holaholaohla")
+        const {id} = await User.verifyToken(req.cookies.token)
+        const data = await User.findById(id)
+        return res.status(200).json({
+            message:"se obtuvo correctamente",
+            data:data
+        })
+    }catch(error){
+        return res.status(500).json({
+            message:"error al obtener un usuario",
+            error:error.message
+        })
+    }
+}
 
 module.exports = {
     index,
@@ -141,4 +155,5 @@ module.exports = {
     deleteUser,
     updateUser,
     completeUpdate,
+    getTokenId
 };

@@ -24,9 +24,14 @@ class Blog {
         this.id = result.insertId;
     }
 
-    static async getAll() {
+    static async getAll(limit, offset) {
         const connection = await db.createConnection();
-        const [rows] = await connection.query("SELECT id_blog,titulo,url_imagen,texto_contenido,created_by,created_at,updated_at,updated_by FROM blog WHERE deleted = false");
+        let query = "SELECT id_blog,titulo,url_imagen,texto_contenido,created_by,created_at,updated_at,updated_by FROM blog WHERE deleted = false"
+
+        if (offset >= 0 && limit) {
+            query += ` LIMIT ${offset}, ${limit}`;
+        }
+        const [rows] = await connection.query(query);
         connection.end();
         return rows;
     }
@@ -92,6 +97,13 @@ class Blog {
             throw new Error("No se pudo eliminar el blog")
         }
         return;
+    }
+    static async count() {
+        const connection = await db.createConnection();
+        const [rows] = await connection.query("SELECT COUNT(*) AS totalCount FROM blog WHERE deleted = 0");
+        connection.end();
+
+        return rows[0].totalCount;
     }
 }
 module.exports = Blog;

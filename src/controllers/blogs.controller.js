@@ -34,16 +34,33 @@ const postBlog = async (req,res)=>{
 }
 const getBlogs = async (req,res)=>{
     try{
-        const data =await Blog.getAll();
-        console.log(data)
-        return res.status(200).json({
-            message:"se encontraron los datos correctamente",
-            data:data
-        })
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+        const offset = (page - 1) * limit;
+        console.log(page, limit, offset);
+        const data = await Blog.getAll(limit, offset);
+
+        let response = {
+            menssage: "se obtuvieron los datos correctamente",
+            data: data,
+        }
+        if (page && limit) {
+            const totalBlogs = await Blog.count();
+            response = {
+                ...response,
+                total: totalBlogs,
+                totalPages: Math.ceil(totalBlogs / limit),
+                currentPage: page
+            };
+        }
+        return res.status(200).json(response)
     }catch(error){
         res.status(500).json({
             message:"error al obtener datos",
             error: error.message,
+            total: totalUsuarios,
+            totalPages: Math.ceil(totalUsuarios / limit),
+            currentPage: page
         })
     }
 }
