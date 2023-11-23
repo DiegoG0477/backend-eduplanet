@@ -6,7 +6,6 @@ const axios = require("axios");
 
 const createOrder = async (req, res) => {
     try {
-        // console.log(PAYPAL_API + " " + PAYPAL_API_CLIENT + " " + PAYPAL_API_SECRET)
         const item = {
             price:req.body.price,
             title:req.body.title,
