@@ -116,6 +116,44 @@ const putBlog = async(req,res)=>{
         })
     }
 }
+
+const updateBlog = async(req,res)=>{
+    try{
+        const token = jwt.verify(req.cookies.token,process.env.SECRET_KEY);
+        const idBlog = req.params.id;
+
+        console.log(token)
+        const blog={
+            ...req.body,
+            updated_at: new Date(),
+            updated_by: token.id,
+        }
+
+        let imagen=null
+        if(req.files?.imagen){
+            imagen=await uploadImage(req.files.imagen.tempFilePath)
+            await fs.unlink(req.files.imagen.tempFilePath)
+
+            blog = {
+                ...blog,
+                url_imagen: imagen.secure_url,
+            }
+        }
+
+        await Blog.update(blog, idBlog);
+
+        return res.status(200).json({
+            message:"se actualizo correctamente",
+            data:blog
+        })
+    }catch(error){
+        return res.status(500).json({
+            message:"error al actualizar un blog",
+            error:error.message
+        })
+    }
+}
+
 const getByIdBlog = async(req,res)=>{
     try{
     const id = req.params.id
@@ -142,5 +180,6 @@ module.exports = {
     getBlogs,
     putBlog,
     deleteBlog,
+    updateBlog,
     getByIdBlog,
 }

@@ -52,6 +52,16 @@ class Blog {
         return;
     }
 
+    static async update(blog, idBlog){
+        const connection = await db.createConnection();
+        const [result] = await connection.query("UPDATE blog SET ? WHERE id_blog = ?", [blog, idBlog]);
+        connection.end();
+        if (result.affectedRows == 0) {
+            throw new Error("No se pudo actualizar el blog")
+        }
+        return;
+    }
+
     static async delete(blog) {
         const connection = await db.createConnection();
         const deletedAt = new Date();
