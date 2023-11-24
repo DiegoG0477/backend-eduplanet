@@ -44,6 +44,7 @@ const getBlogs = async (req,res)=>{
             menssage: "se obtuvieron los datos correctamente",
             data: data,
         }
+        
         if (page && limit) {
             const totalBlogs = await Blog.count();
             response = {
@@ -58,7 +59,7 @@ const getBlogs = async (req,res)=>{
         res.status(500).json({
             message:"error al obtener datos",
             error: error.message,
-            total: totalUsuarios,
+            total: totalBlogs,
             totalPages: Math.ceil(totalUsuarios / limit),
             currentPage: page
         })

@@ -69,10 +69,10 @@ class Material {
 
     static async updateById(material, id){
         const connection = await db.createConnection();
+        console.log("id de material " + id)
         const sql = "UPDATE material SET ? WHERE id_material = ?";
-        const [result] = connection.execute(sql, [material, id]);
+        const [result] = await connection.query(sql, [material, id]);
         connection.end();
-        console.log(result);
         if (result.affectedRows === 0) {
             throw new Error("no se actualizó el usuario");
         }

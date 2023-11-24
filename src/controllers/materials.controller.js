@@ -78,8 +78,8 @@ const uploadMaterial = async (req, res) => {
             precio: req.body.precio,
             editorial: req.body.editorial,
             autor: req.body.autor,
-            anioMaterial: req.body.anioMaterial,
-            numeroPaginas: req.body.numeroPaginas,
+            anioMaterial: req.body.year_material,
+            numeroPaginas: req.body.numero_paginas,
             descripcion: req.body.descripcion,
             portadaLibroUrl: portada.secure_url,
             pdfUrl: pdf.secure_url,
@@ -101,7 +101,7 @@ const uploadMaterial = async (req, res) => {
 
 const updateMaterial = async (req, res) => {
     try{
-        const token = jwt.verify(req.cookies.token,process.env.SECRET);
+        const token = jwt.verify(req.cookies.token,process.env.SECRET_KEY);
         const idMaterial = req.params.id;
 
         let material = {
@@ -117,20 +117,24 @@ const updateMaterial = async (req, res) => {
 
             material = {
                 ...material,
-                portadaLibroUrl: portada.secure_url,
+                portada_libro: portada.secure_url,
             }
         } 
 
-        let pdf = null
+        console.log(material);
+
+        let pdfUrl = null
         if(req.files?.pdf){
-            pdf = await uploadPdf(req.files.pdf.tempFilePath);
+            pdfUrl = await uploadPdf(req.files.pdf.tempFilePath);
             await fs.unlink(req.files.pdf.tempFilePath);
 
             material = {
                 ...material,
-                pdfUrl: pdf.secure_url,
+                pdf: pdfUrl.secure_url,
             }
         }
+
+        console.log(material);
         
         const updatedMaterial = await Material.updateById(material, idMaterial);
 
@@ -140,6 +144,7 @@ const updateMaterial = async (req, res) => {
         });
 
     }catch(error){
+        console.log(error);
         return res.status(500).json({
             message: "error al actualizar el material",
             error: error,
