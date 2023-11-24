@@ -79,16 +79,16 @@ const createWithTransaction = async (req, res) =>{
         const compra = new Buy({
             total:req.body.total
         })
-        const idCompra = await compra.saveWithTransaction(connection)
+        const idCompra = await compra.saveWithTransaction(connection);
 
         for(d of req.body.details){
             const details = new Details({
                 idCompra,...d
             })
-            await details.saveWithTransaction(connection)
+            await details.saveWithTransaction(connection);
         }
 
-        await connection.commit()
+        await connection.commit();
 
         return res.status(200).json({
             message:"se creo la compra"
