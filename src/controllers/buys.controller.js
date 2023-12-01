@@ -10,61 +10,64 @@ const db = require("../configs/db.config")
 
 const createOrder = async (req, res) => {
     try {
-        // console.log(PAYPAL_API + " " + PAYPAL_API_CLIENT + " " + PAYPAL_API_SECRET)
-        // const item = {
-        //     price:req.body.price,
-        //     title:req.body.title,
-        // };
-        // console.log(item);
+        console.log(PAYPAL_API + " " + PAYPAL_API_CLIENT + " " + PAYPAL_API_SECRET)
+        const item = {
+            price:req.body.price,
+            title:req.body.title,
+        };
+        console.log(item);
 
         const compra = new Buy({
-            total:req.body.total
+            total:req.body.price
         })
         await compra.save()
 
-        const idCompra = compra.id
-        for(d of req.body.details){
-            const details = new Details({
-                idCompra,...d
-            })
-            await details.save()
-        }
+        // const idCompra = compra.id
+        // for(d of req.body.details){
+        //     const details = new Details({
+        //         idCompra,...d
+        //     })
+        //     await details.save()
+        // }
 
-        // const order = {
-        //     intent: "CAPTURE",
-        //     purchase_units: [
-        //         {
-        //             amount: {
-        //                 currency_code: "MXN",
-        //                 value: item.price,
-        //             },
-        //             description: item.title,
-        //         },
-        //     ],
-        //     application_context: {
-        //         brand_name: "eduplanet.com",
-        //         landing_page: "NO_PREFERENCE",
-        //         user_action: "PAY_NOW",
-        //         return_url: `${HOST}/capture-order`,
-        //         cancel_url: `${HOST}/cancel-payment`,
-        //     },
-        // };
+        const order = {
+            intent: "CAPTURE",
+            purchase_units: [
+                {
+                    amount: {
+                        currency_code: "MXN",
+                        value: item.price,
+                    },
+                    description: item.title,
+                },
+            ],
+            application_context: {
+                brand_name: "eduplanet.com",
+                landing_page: "NO_PREFERENCE",
+                user_action: "PAY_NOW",
+                return_url: `${HOST}/capture-order`,
+                cancel_url: `${HOST}/cancel-payment`,
+            },
+        };
 
-        // const response = await axios.post(
-        //     `${PAYPAL_API}/v2/checkout/orders`,
-        //     order,
-        //     {
-        //         auth: {
-        //             username: PAYPAL_API_CLIENT,
-        //             password: PAYPAL_API_SECRET,
-        //         },
-        //     }
-        // );
+        const response = await axios.post(
+            `${PAYPAL_API}/v2/checkout/orders`,
+            order,
+            {
+                auth: {
+                    username: PAYPAL_API_CLIENT,
+                    password: PAYPAL_API_SECRET,
+                },
+            }
+        );
 
-        return res.status(200).json({
-            message:"se creo la compra",
-            compra
-        });
+        // return res.status(200).json({
+        //     message:"se creo la compra",
+        //     data:response
+        // });
+
+        console.log(response.data)
+        return res.status(201).json(response.data);
     } catch (error) {
         console.log(error);
         return res.status(500).json("Something goes wrong");
@@ -89,6 +92,7 @@ const createWithTransaction = async (req, res) =>{
         }
 
         await connection.commit();
+        
 
         return res.status(200).json({
             message:"se creo la compra"
@@ -130,7 +134,7 @@ const captureOrder = async (req, res) => {
 const cancelPayment = (req, res) => res.redirect("/");
 
 module.exports = {
-    create: createWithTransaction,
+    create: createOrder,
     captureOrder,
     cancelPayment,
 };

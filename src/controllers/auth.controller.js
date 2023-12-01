@@ -11,6 +11,7 @@ const signUp = async (req, res) => {
             nombre: req.body.nombre,
             apellidoPat: req.body.apellidoPat,
             apellidoMat: req.body.apellidoMat,
+            tipoUsuario: 2,
         });
 
         const found = await User.findByEmail(user.email);
@@ -54,18 +55,31 @@ const login = async (req, res) => {
     } else {
         const token = User.getToken(userFound.id);
 
+        let hashedType = "";
+        if(userFound.tipoUsuario == 1){
+            hashedType = "Administrador";
+        } else if(userFound.tipoUsuario == 2){
+            hashedType = "Cliente";
+        }
+
         const serializedToken = cookie.serialize("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            maxAge: 1000 * 60 * 60 * 24 * 30,
+            maxAge: 1000 * 60 * 60 * 24 * 1,
             path: "/",
         });
 
-        res.setHeader("Set-Cookie", serializedToken);
-        res.cookie(serializedToken);
+        const serializedType = cookie.serialize("typeUser", hashedType, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 1000 * 60 * 60 * 24 * 1,
+            path: "/",
+        });
 
-        console.log(token);
+        res.setHeader("Set-Cookie", [serializedToken, serializedType]);
+        // res.setHeader("Set-Cookie", hashedType);
 
         return res.status(200).json({
             message: "inicio de sesion correcto",
@@ -74,7 +88,31 @@ const login = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    res.setHeader("Set-Cookie", [
+        cookie.serialize("token", undefined, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            expires: new Date(0),
+            path: "/",
+        }),
+        cookie.serialize("typeUser", "", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            expires: new Date(0),
+            path: "/",
+        }),
+    ]);
+
+    return res.status(200).json({
+        message: "sesion cerrada correctamente",
+    });
+}
+
 module.exports = {
     signUp,
     login,
+    logout
 };

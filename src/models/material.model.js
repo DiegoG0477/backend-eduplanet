@@ -31,7 +31,6 @@ class Material {
 
         const [rows] = await connection.execute(query);
         connection.end();
-        console.log(rows);
         return rows;
     }
     

@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 class User {
-    constructor({ id,email, password, nombre, apellidoPat, apellidoMat, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy }){
+    constructor({ id,email, password, nombre, apellidoPat, apellidoMat, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, tipoUsuario }){
         this.id = id;
         this.email = email;
         this.password = password;
@@ -17,6 +17,7 @@ class User {
         this.deleted = deleted;
         this.deletedAt = deletedAt;
         this.deletedBy = deletedBy;
+        this.tipoUsuario = tipoUsuario;
     }
 
     static async findAll(limit, offset){
@@ -33,7 +34,7 @@ class User {
 
         if(rows.length > 0){
             const row = rows[0];
-            return new User({ id: row.id_usuario, email: row.email, password: row.password, nombre: row.nombre, apellidoPat: row.apellido_pat, apellidoMat: row.apellido_mat, createdAt: row.created_at, updatedAt: row.updated_at, updatedBy: row.updated_by, deleted: row.deleted, deletedAt: row.deleted_at, deletedBy: row.deleted_by });
+            return new User({ id: row.id_usuario, email: row.email, password: row.password, nombre: row.nombre, apellidoPat: row.apellido_pat, apellidoMat: row.apellido_mat, createdAt: row.created_at, updatedAt: row.updated_at, updatedBy: row.updated_by, deleted: row.deleted, deletedAt: row.deleted_at, deletedBy: row.deleted_by, tipoUsuario: row.tipo_usuario });
         }
 
         return null;
@@ -47,7 +48,7 @@ class User {
 
         if(rows.length > 0){
             const row = rows[0];
-            return new User({ id: row.id_usuario, email: row.email, password: row.password, nombre: row.nombre, apellidoPat: row.apellido_pat, apellidoMat: row.apellido_mat, createdAt: row.created_at, updatedAt: row.updated_at, updatedBy: row.updated_by, deleted: row.deleted, deletedAt: row.deleted_at, deletedBy: row.deleted_by });
+            return new User({ id: row.id_usuario, email: row.email, password: row.password, nombre: row.nombre, apellidoPat: row.apellido_pat, apellidoMat: row.apellido_mat, createdAt: row.created_at, updatedAt: row.updated_at, updatedBy: row.updated_by, deleted: row.deleted, deletedAt: row.deleted_at, deletedBy: row.deleted_by, tipoUsuario: row.tipo_usuario });
         }
 
         return null;
@@ -138,6 +139,23 @@ class User {
             throw new Error("No se actualizó el usuario");
         }
         return;
+    }
+
+    static async getTypeUser(userId){
+        const connection = await db.createConnection();
+        const [result] = await connection.execute("SELECT tipo_usuario FROM usuarios WHERE id_usuario = ?",[userId]);
+        connection.end();
+
+        if(result.length > 0){
+            const row = result[0];
+            if(row.tipo_usuario === 1){
+                return "Administrador";
+            }else if(row.tipo_usuario === 2){
+                return "Cliente";
+            }
+        }
+
+        return null;
     }
 
     // static async putUpdate(id, user){

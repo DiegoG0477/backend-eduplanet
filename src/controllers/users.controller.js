@@ -31,25 +31,25 @@ const index = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-  try{
-    const { id } = req.params;
-    const user = await User.findById(id);
-    
-    if (!user) {
-      return res.status(404).json({
-        message: "usuario no encontrado",
-      });
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "usuario no encontrado",
+            });
+        }
+        return res.status(200).json({
+            message: "usuario encontrado correctamente",
+            data: user,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "error obteniendo el usuario",
+            error: error,
+        });
     }
-    return res.status(200).json({
-      message: "usuario encontrado correctamente",
-      data: user,
-    });
-  }catch(error){
-    return res.status(500).json({
-      message: "error obteniendo el usuario",
-      error: error,
-    });
-  }
 };
 
 const deleteUser = async (req, res) => {
@@ -72,7 +72,7 @@ const physicDeleteUser = async (req, res) => {
     try {
         const { id } = req.params;
         await User.physicDelete(id);
-        
+
         return res.status(200).json({
             message: "usuario eliminado correctamente",
         });
@@ -82,38 +82,61 @@ const physicDeleteUser = async (req, res) => {
             error: err,
         });
     }
-}
+};
 
 const completeUpdate = async (req, res) => {
-  try {
-      const { id } = req.params;
-          
-      const user = {
-          ...req.body,
-          password: await User.encryptPassword(req.body.password),
-          updated_at: new Date(),
-          updated_by: req.usuario_id,
-      };
+    try {
+        const { id } = req.params;
 
-      await User.putUpdate(id, user);
+        const user = {
+            ...req.body,
+            password: await User.encryptPassword(req.body.password),
+            updated_at: new Date(),
+            updated_by: req.usuario_id,
+        };
 
-      return res.status(200).json({
-          message: "usuario actualizado correctamente",
-      });
-  } catch (err) {
-      return res.status(500).json({
-          message: "error actualizando el usuario",
-          error: err,
-      });
-  }
-}
+        await User.putUpdate(id, user);
+
+        return res.status(200).json({
+            message: "usuario actualizado correctamente",
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: "error actualizando el usuario",
+            error: err,
+        });
+    }
+};
+
+const getTypeUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const typeUser = await User.getTypeUser(id);
+
+        if (!typeUser) {
+            return res.status(404).json({
+                message: "usuario no encontrado",
+            });
+        }
+
+        return res.status(200).json({
+            message: "usuario encontrado correctamente",
+            data: typeUser,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: "error obteniendo el usuario",
+            error: err,
+        });
+    }
+};
 
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        if (req.body.password) 
+        if (req.body.password)
             req.body.password = await User.encryptPassword(req.body.password);
-        
+
         const user = {
             ...req.body,
             updated_at: new Date(),
@@ -131,23 +154,22 @@ const updateUser = async (req, res) => {
             error: err,
         });
     }
-}
-const getTokenId = async (req,res) =>{
-    try{
-        console.log("holaholaohla")
-        const {id} = await User.verifyToken(req.cookies.token)
-        const data = await User.findById(id)
+};
+const getTokenId = async (req, res) => {
+    try {
+        const { id } = await User.verifyToken(req.cookies.token);
+        const data = await User.findById(id);
         return res.status(200).json({
-            message:"se obtuvo correctamente",
-            data:data
-        })
-    }catch(error){
+            message: "se obtuvo correctamente",
+            data: data,
+        });
+    } catch (error) {
         return res.status(500).json({
-            message:"error al obtener un usuario",
-            error:error.message
-        })
+            message: "error al obtener un usuario",
+            error: error.message,
+        });
     }
-}
+};
 
 module.exports = {
     index,
@@ -155,5 +177,6 @@ module.exports = {
     deleteUser,
     updateUser,
     completeUpdate,
-    getTokenId
+    getTokenId,
+    getTypeUser,
 };
