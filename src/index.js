@@ -27,13 +27,13 @@ app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/v1/auth", authRouter);
-app.use("/v1/users", usersRouter);
-app.use("/v1/blogs", blogsRouter);
-app.use("/v1/videos", videosRouter);
-app.use("/v1/comentarios", comentariosRouter);
-app.use("/v1/materials", materialsRouter);
-app.use("/v1/payment", paymentRouter);
+app.use("/v3/auth", authRouter);
+app.use("/v3/users", usersRouter);
+app.use("/v3/blogs", blogsRouter);
+app.use("/v3/videos", videosRouter);
+app.use("/v3/comentarios", comentariosRouter);
+app.use("/v3/materials", materialsRouter);
+app.use("/v3/payment", paymentRouter);
 
 app.listen(PORT, () => {
     console.log("corriendo en el puerto " + PORT);
