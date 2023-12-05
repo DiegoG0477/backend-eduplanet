@@ -88,26 +88,35 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-    res.setHeader("Set-Cookie", [
-        cookie.serialize("token", undefined, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            expires: new Date(0),
-            path: "/",
-        }),
-        cookie.serialize("typeUser", "", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            expires: new Date(0),
-            path: "/",
-        }),
-    ]);
-
-    return res.status(200).json({
-        message: "sesion cerrada correctamente",
-    });
+    try{
+        res.setHeader("Set-Cookie", [
+            cookie.serialize("token", undefined, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                expires: new Date(0),
+                path: "/",
+            }),
+            cookie.serialize("typeUser", undefined, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                expires: new Date(0),
+                path: "/",
+            }),
+        ]);
+    
+        return res.status(200).json({
+            message: "sesion cerrada correctamente",
+        });
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({
+            message: "error al cerrar la sesion",
+            error: error,
+        });
+    }
 }
 
 module.exports = {
