@@ -79,7 +79,6 @@ const login = async (req, res) => {
         });
 
         res.setHeader("Set-Cookie", [serializedToken, serializedType]);
-        // res.setHeader("Set-Cookie", hashedType);
 
         return res.status(200).json({
             message: "inicio de sesion correcto",

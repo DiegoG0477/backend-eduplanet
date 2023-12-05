@@ -22,7 +22,7 @@ class User {
 
     static async findAll(limit, offset){
         const connection = await db.createConnection();
-        const [rows] = await connection.execute("SELECT * FROM usuarios u INNER JOIN datos_usuarios du ON u.id_usuario = du.id_usuario WHERE deleted = 0 LIMIT ? OFFSET ?", [limit, offset]);
+        const [rows] = await connection.execute("SELECT * FROM usuarios u INNER JOIN datos_usuarios du ON u.id_usuario = du.id_usuario WHERE deleted = 0 LIMIT ?, ?", [offset, limit]);
         connection.end();
         return rows;
     }
