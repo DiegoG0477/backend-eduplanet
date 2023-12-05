@@ -3,7 +3,7 @@ const index = async (req, res) => {
     try {
         const { page, limit } = req.query;
         const offset = (page - 1) * limit;
-        const users = await User.findAll(parseInt(limit), offset);
+        const users = await User.findAll(parseInt(limit), parseInt(offset));
 
         let response = {
             message: "se obtuvieron correctamente los usuarios",
